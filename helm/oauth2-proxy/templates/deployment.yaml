@@ -42,6 +42,19 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ template "oauth2-proxy.serviceAccountName" . }}
+      {{- if .Values.customContent }}
+      initContainers:
+        - name: {{ .Chart.Name }}-custom-content
+          image: busybox
+          command:
+          - wget
+          - "--directory-prefix"
+          - "/custom-content"
+          - "{{ .Values.customContent.url }}"
+          volumeMounts:
+          - name: custom-content
+            mountPath: "/custom-content"
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -225,6 +238,11 @@ spec:
 {{- else }}
           secretName: {{ template "oauth2-proxy.fullname" . }}-accesslist
 {{- end }}
+{{- end }}
+
+{{- if .Values.customContent.enabled }}
+      - name: custom-content
+        emptyDir: {}
 {{- end }}
 
 {{- if or .Values.config.existingConfig .Values.config.configFile }}
