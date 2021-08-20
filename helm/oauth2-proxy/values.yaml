@@ -34,7 +34,8 @@ config:
 
 customContent:
   enabled: false
-  # url: https://...
+  # files:
+  #   myfile.png: https://...
 
 image:
   repository: "quay.io/oauth2-proxy/oauth2-proxy"

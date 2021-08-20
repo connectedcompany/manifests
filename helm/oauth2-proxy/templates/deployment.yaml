@@ -46,14 +46,17 @@ spec:
       initContainers:
         - name: {{ .Chart.Name }}-custom-content
           image: busybox
-          command:
-          - wget
-          - "--directory-prefix"
-          - "/custom-content"
-          - "{{ .Values.customContent.url }}"
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - >-
+                {{- range $key, $value := .Values.customContent.files }}
+                wget -O "/custom-content/{{ .$key }}" "{{ .$value }}" &&
+                {{- end }}
+                true
           volumeMounts:
-          - name: custom-content
-            mountPath: "/custom-content"
+            - name: custom-content
+              mountPath: "/custom-content"
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}
