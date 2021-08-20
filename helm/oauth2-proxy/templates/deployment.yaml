@@ -201,6 +201,11 @@ spec:
           name: {{ template "oauth2-proxy.fullname" . }}-htpasswd-file
           readOnly: true
 {{- end }}
+{{- if .Values.customContent.enabled }}
+        - mountPath: "/custom-content"
+          name: custom-content
+          readOnly: true
+{{- end }}
 {{- if ne (len .Values.extraVolumeMounts) 0 }}
 {{ toYaml .Values.extraVolumeMounts | indent 8 }}
 {{- end }}
